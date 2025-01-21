@@ -1,0 +1,270 @@
+<html>
+<head>
+<title>crypto_trends.ipynb</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+.ls0 { height: 1px; border-width: 0; color: #43454a; background-color:#43454a}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+crypto_trends.ipynb</font>
+</center></td></tr></table>
+<pre><span class="s0">#%% md 
+</span><span class="s1"># Data cleanup <hr class="ls0"></span><span class="s0">#%% md 
+</span><span class="s1">Basic data inspection, standardization and cleanup. <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s2">import </span><span class="s1">pandas </span><span class="s2">as </span><span class="s1">pd</span>
+
+<span class="s0"># https://www.kaggle.com/datasets/mczielinski/bitcoin-historical-data/data</span>
+<span class="s1">df_btc </span><span class="s3">= </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">read_csv</span><span class="s3">(</span><span class="s4">'data/btc_usd.csv'</span><span class="s3">)</span>
+<span class="s1">df_btc</span><span class="s3">.</span><span class="s1">info</span><span class="s3">()</span>
+
+<span class="s0"># https://www.kaggle.com/datasets/imranbukhari/comprehensive-ethusd-1m-data</span>
+<span class="s1">df_eth </span><span class="s3">= </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">read_csv</span><span class="s3">(</span><span class="s4">'data/eth_usd_combined.csv'</span><span class="s3">)</span>
+<span class="s1">df_eth</span><span class="s3">.</span><span class="s1">info</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s1">df_btc</span><span class="s3">.</span><span class="s1">head</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s1">df_eth</span><span class="s3">.</span><span class="s1">head</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s1">missing_values_btc </span><span class="s3">= </span><span class="s1">df_btc</span><span class="s3">.</span><span class="s1">isnull</span><span class="s3">().</span><span class="s1">sum</span><span class="s3">()</span>
+<span class="s1">print</span><span class="s3">(</span><span class="s1">missing_values_btc</span><span class="s3">)</span>
+
+<span class="s1">missing_values_eth </span><span class="s3">= </span><span class="s1">df_eth</span><span class="s3">.</span><span class="s1">isnull</span><span class="s3">().</span><span class="s1">sum</span><span class="s3">()</span>
+<span class="s1">print</span><span class="s3">(</span><span class="s1">missing_values_eth</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s1">df_btc</span><span class="s3">.</span><span class="s1">ffill</span><span class="s3">()</span>
+<span class="s1">df_eth</span><span class="s3">.</span><span class="s1">ffill</span><span class="s3">()</span>
+
+<span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">] = </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">to_datetime</span><span class="s3">(</span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">unit</span><span class="s3">=</span><span class="s4">'s'</span><span class="s3">)</span>
+<span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">] = </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">to_datetime</span><span class="s3">(</span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">])</span>
+
+<span class="s1">df_btc </span><span class="s3">= </span><span class="s1">df_btc</span><span class="s3">[[</span><span class="s4">'Timestamp'</span><span class="s3">, </span><span class="s4">'Open'</span><span class="s3">, </span><span class="s4">'High'</span><span class="s3">, </span><span class="s4">'Low'</span><span class="s3">, </span><span class="s4">'Close'</span><span class="s3">, </span><span class="s4">'Volume'</span><span class="s3">]]</span>
+<span class="s1">df_eth </span><span class="s3">= </span><span class="s1">df_eth</span><span class="s3">[[</span><span class="s4">'Timestamp'</span><span class="s3">, </span><span class="s4">'Open'</span><span class="s3">, </span><span class="s4">'High'</span><span class="s3">, </span><span class="s4">'Low'</span><span class="s3">, </span><span class="s4">'Close'</span><span class="s3">, </span><span class="s4">'Volume'</span><span class="s3">]]</span>
+
+<span class="s1">numeric_columns </span><span class="s3">= [</span><span class="s4">'Open'</span><span class="s3">, </span><span class="s4">'High'</span><span class="s3">, </span><span class="s4">'Low'</span><span class="s3">, </span><span class="s4">'Close'</span><span class="s3">, </span><span class="s4">'Volume'</span><span class="s3">]</span>
+<span class="s1">df_btc</span><span class="s3">[</span><span class="s1">numeric_columns</span><span class="s3">] = </span><span class="s1">df_btc</span><span class="s3">[</span><span class="s1">numeric_columns</span><span class="s3">].</span><span class="s1">astype</span><span class="s3">(</span><span class="s1">float</span><span class="s3">)</span>
+<span class="s1">df_eth</span><span class="s3">[</span><span class="s1">numeric_columns</span><span class="s3">] = </span><span class="s1">df_eth</span><span class="s3">[</span><span class="s1">numeric_columns</span><span class="s3">].</span><span class="s1">astype</span><span class="s3">(</span><span class="s1">float</span><span class="s3">)</span>
+
+<span class="s1">df_btc</span><span class="s3">.</span><span class="s1">set_index</span><span class="s3">(</span><span class="s4">'Timestamp'</span><span class="s3">)</span>
+<span class="s1">df_eth</span><span class="s3">.</span><span class="s1">set_index</span><span class="s3">(</span><span class="s4">'Timestamp'</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s1">df_btc</span><span class="s3">.</span><span class="s1">drop_duplicates</span><span class="s3">(</span><span class="s1">inplace</span><span class="s3">=</span><span class="s2">True</span><span class="s3">)</span>
+<span class="s1">df_eth</span><span class="s3">.</span><span class="s1">drop_duplicates</span><span class="s3">(</span><span class="s1">inplace</span><span class="s3">=</span><span class="s2">True</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% 
+</span><span class="s1">stats_btc </span><span class="s3">= </span><span class="s1">df_btc</span><span class="s3">.</span><span class="s1">describe</span><span class="s3">()</span>
+<span class="s1">print</span><span class="s3">(</span><span class="s1">stats_btc</span><span class="s3">)</span>
+
+<span class="s1">stats_eth </span><span class="s3">= </span><span class="s1">df_eth</span><span class="s3">.</span><span class="s1">describe</span><span class="s3">()</span>
+<span class="s1">print</span><span class="s3">(</span><span class="s1">stats_eth</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">### Visualization <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s2">import </span><span class="s1">matplotlib</span><span class="s3">.</span><span class="s1">pyplot </span><span class="s2">as </span><span class="s1">plt</span>
+
+<span class="s0"># BTC</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">14</span><span class="s3">,</span><span class="s5">7</span><span class="s3">))</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Open'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'Open price'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'yellow'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'Close price'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'blue'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'BTC open and close price over time'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xlabel</span><span class="s3">(</span><span class="s4">'Date'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">ylabel</span><span class="s3">(</span><span class="s4">'Price (USD)'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">legend</span><span class="s3">()</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span>
+
+<span class="s0"># ETH</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">14</span><span class="s3">,</span><span class="s5">7</span><span class="s3">))</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Open'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'Open price'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'yellow'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'Close price'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'blue'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'ETH open and close price over time'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xlabel</span><span class="s3">(</span><span class="s4">'Date'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">ylabel</span><span class="s3">(</span><span class="s4">'Price (USD)'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">legend</span><span class="s3">()</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">#### BTC/ETH feature correlation heatmap <hr class="ls0"></span><span class="s0">#%% 
+# Combine BTC and ETH data</span>
+<span class="s1">df_combined </span><span class="s3">= </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">merge</span><span class="s3">(</span><span class="s1">df_btc</span><span class="s3">, </span><span class="s1">df_eth</span><span class="s3">, </span><span class="s1">on</span><span class="s3">=</span><span class="s4">'Timestamp'</span><span class="s3">, </span><span class="s1">suffixes</span><span class="s3">=(</span><span class="s4">'_btc'</span><span class="s3">, </span><span class="s4">'_eth'</span><span class="s3">))</span>
+
+<span class="s0"># Calculate correlation matrix</span>
+<span class="s1">partial_correlation </span><span class="s3">= </span><span class="s1">df_combined</span><span class="s3">.</span><span class="s1">corr</span><span class="s3">()</span>
+
+<span class="s2">import </span><span class="s1">seaborn </span><span class="s2">as </span><span class="s1">sns</span>
+<span class="s2">import </span><span class="s1">matplotlib</span><span class="s3">.</span><span class="s1">pyplot </span><span class="s2">as </span><span class="s1">plt</span>
+
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">10</span><span class="s3">, </span><span class="s5">8</span><span class="s3">))</span>
+<span class="s1">sns</span><span class="s3">.</span><span class="s1">heatmap</span><span class="s3">(</span><span class="s1">partial_correlation</span><span class="s3">, </span><span class="s1">annot</span><span class="s3">=</span><span class="s2">True</span><span class="s3">, </span><span class="s1">cmap</span><span class="s3">=</span><span class="s4">'coolwarm'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'Correlation heatmap BTC/ETH'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">#### Rolling correlation between closing prices <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s1">rolling_correlation </span><span class="s3">= </span><span class="s1">df_combined</span><span class="s3">[</span><span class="s4">'Close_btc'</span><span class="s3">].</span><span class="s1">rolling</span><span class="s3">(</span><span class="s1">window</span><span class="s3">=</span><span class="s5">30</span><span class="s3">).</span><span class="s1">corr</span><span class="s3">(</span><span class="s1">df_combined</span><span class="s3">[</span><span class="s4">'Close_eth'</span><span class="s3">])</span>
+
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">14</span><span class="s3">, </span><span class="s5">7</span><span class="s3">))</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">df_combined</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">rolling_correlation</span><span class="s3">, </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'30-day rolling correlation'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'purple'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'Rolling correlation between BTC and ETH closing prices'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xlabel</span><span class="s3">(</span><span class="s4">'Date'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">ylabel</span><span class="s3">(</span><span class="s4">'Correlation'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">legend</span><span class="s3">()</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">#### Rolling volatility <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Volatility'</span><span class="s3">] = </span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">].</span><span class="s1">rolling</span><span class="s3">(</span><span class="s1">window</span><span class="s3">=</span><span class="s5">30</span><span class="s3">).</span><span class="s1">std</span><span class="s3">()</span>
+<span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Volatility'</span><span class="s3">] = </span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">].</span><span class="s1">rolling</span><span class="s3">(</span><span class="s1">window</span><span class="s3">=</span><span class="s5">30</span><span class="s3">).</span><span class="s1">std</span><span class="s3">()</span>
+
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">14</span><span class="s3">,</span><span class="s5">7</span><span class="s3">))</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Volatility'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'30-day rolling volatility'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'yellow'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Volatility'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'30-day rolling volatility'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'blue'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'BTC and ETH rolling volatility'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xlabel</span><span class="s3">(</span><span class="s4">'Date'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">ylabel</span><span class="s3">(</span><span class="s4">'Volatility (standard deviation)'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">legend</span><span class="s3">()</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">#### Price vs volume <hr class="ls0"></span><span class="s0">#%% 
+# BTC</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">12</span><span class="s3">, </span><span class="s5">6</span><span class="s3">))</span>
+<span class="s1">sns</span><span class="s3">.</span><span class="s1">scatterplot</span><span class="s3">(</span><span class="s1">data</span><span class="s3">=</span><span class="s1">df_combined</span><span class="s3">, </span><span class="s1">x</span><span class="s3">=</span><span class="s4">'Volume_btc'</span><span class="s3">, </span><span class="s1">y</span><span class="s3">=</span><span class="s4">'Close_btc'</span><span class="s3">, </span><span class="s1">alpha</span><span class="s3">=</span><span class="s5">0.5</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'BTC price vs volume'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xlabel</span><span class="s3">(</span><span class="s4">'BTC volume'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">ylabel</span><span class="s3">(</span><span class="s4">'BTC closing price'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span>
+
+<span class="s0"># ETH</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">12</span><span class="s3">, </span><span class="s5">6</span><span class="s3">))</span>
+<span class="s1">sns</span><span class="s3">.</span><span class="s1">scatterplot</span><span class="s3">(</span><span class="s1">data</span><span class="s3">=</span><span class="s1">df_combined</span><span class="s3">, </span><span class="s1">x</span><span class="s3">=</span><span class="s4">'Volume_eth'</span><span class="s3">, </span><span class="s1">y</span><span class="s3">=</span><span class="s4">'Close_eth'</span><span class="s3">, </span><span class="s1">alpha</span><span class="s3">=</span><span class="s5">0.5</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'ETH price vs volume'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xlabel</span><span class="s3">(</span><span class="s4">'ETH volume'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">ylabel</span><span class="s3">(</span><span class="s4">'ETH closing price'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1"># Machine learning <hr class="ls0"></span><span class="s0">#%% md 
+</span><span class="s1">Calculate mean average for later on (if needed). Ensure no empty values just in case. <hr class="ls0"></span><span class="s0">#%% 
+# BTC</span>
+<span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Price_Change'</span><span class="s3">] = </span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">].</span><span class="s1">pct_change</span><span class="s3">() * </span><span class="s5">100</span>
+<span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'MA_10'</span><span class="s3">] = </span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">].</span><span class="s1">rolling</span><span class="s3">(</span><span class="s1">window</span><span class="s3">=</span><span class="s5">10</span><span class="s3">).</span><span class="s1">mean</span><span class="s3">()</span>
+<span class="s1">df_btc</span><span class="s3">.</span><span class="s1">dropna</span><span class="s3">(</span><span class="s1">inplace</span><span class="s3">=</span><span class="s2">True</span><span class="s3">)</span>
+
+<span class="s0"># ETH</span>
+<span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Price_Change'</span><span class="s3">] = </span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">].</span><span class="s1">pct_change</span><span class="s3">() * </span><span class="s5">100</span>
+<span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'MA_10'</span><span class="s3">] = </span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">].</span><span class="s1">rolling</span><span class="s3">(</span><span class="s1">window</span><span class="s3">=</span><span class="s5">10</span><span class="s3">).</span><span class="s1">mean</span><span class="s3">()</span>
+<span class="s1">df_eth</span><span class="s3">.</span><span class="s1">dropna</span><span class="s3">(</span><span class="s1">inplace</span><span class="s3">=</span><span class="s2">True</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">Split data into training and test sets. <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s2">from </span><span class="s1">sklearn</span><span class="s3">.</span><span class="s1">model_selection </span><span class="s2">import </span><span class="s1">train_test_split</span>
+
+<span class="s0"># BTC</span>
+<span class="s1">X_btc </span><span class="s3">= </span><span class="s1">df_btc</span><span class="s3">[[</span><span class="s4">'Open'</span><span class="s3">, </span><span class="s4">'High'</span><span class="s3">, </span><span class="s4">'Low'</span><span class="s3">, </span><span class="s4">'Volume'</span><span class="s3">, </span><span class="s4">'MA_10'</span><span class="s3">]]</span>
+<span class="s1">y_btc </span><span class="s3">= </span><span class="s1">df_btc</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">]</span>
+
+<span class="s1">X_btc_train</span><span class="s3">, </span><span class="s1">X_btc_test</span><span class="s3">, </span><span class="s1">y_btc_train</span><span class="s3">, </span><span class="s1">y_btc_test </span><span class="s3">= </span><span class="s1">train_test_split</span><span class="s3">(</span><span class="s1">X_btc</span><span class="s3">, </span><span class="s1">y_btc</span><span class="s3">, </span><span class="s1">test_size</span><span class="s3">=</span><span class="s5">0.2</span><span class="s3">, </span><span class="s1">random_state</span><span class="s3">=</span><span class="s5">42</span><span class="s3">)</span>
+
+<span class="s0"># ETH</span>
+<span class="s1">X_eth </span><span class="s3">= </span><span class="s1">df_eth</span><span class="s3">[[</span><span class="s4">'Open'</span><span class="s3">, </span><span class="s4">'High'</span><span class="s3">, </span><span class="s4">'Low'</span><span class="s3">, </span><span class="s4">'Volume'</span><span class="s3">, </span><span class="s4">'MA_10'</span><span class="s3">]]</span>
+<span class="s1">y_eth </span><span class="s3">= </span><span class="s1">df_eth</span><span class="s3">[</span><span class="s4">'Close'</span><span class="s3">]</span>
+
+<span class="s1">X_eth_train</span><span class="s3">, </span><span class="s1">X_eth_test</span><span class="s3">, </span><span class="s1">y_eth_train</span><span class="s3">, </span><span class="s1">y_eth_test </span><span class="s3">= </span><span class="s1">train_test_split</span><span class="s3">(</span><span class="s1">X_eth</span><span class="s3">, </span><span class="s1">y_eth</span><span class="s3">, </span><span class="s1">test_size</span><span class="s3">=</span><span class="s5">0.2</span><span class="s3">, </span><span class="s1">random_state</span><span class="s3">=</span><span class="s5">42</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">### Linear regression <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s2">from </span><span class="s1">sklearn</span><span class="s3">.</span><span class="s1">linear_model </span><span class="s2">import </span><span class="s1">LinearRegression</span>
+
+<span class="s1">X_combined_btc </span><span class="s3">= </span><span class="s1">df_combined</span><span class="s3">[[</span><span class="s4">'Volume_btc'</span><span class="s3">]]</span>
+<span class="s1">y_combined_btc </span><span class="s3">= </span><span class="s1">df_combined</span><span class="s3">[</span><span class="s4">'Close_btc'</span><span class="s3">]</span>
+
+<span class="s1">model_btc </span><span class="s3">= </span><span class="s1">LinearRegression</span><span class="s3">()</span>
+<span class="s1">model_btc</span><span class="s3">.</span><span class="s1">fit</span><span class="s3">(</span><span class="s1">X_combined_btc</span><span class="s3">, </span><span class="s1">y_combined_btc</span><span class="s3">)</span>
+
+<span class="s1">print</span><span class="s3">(</span><span class="s4">f'BTC Regression coefficient: </span><span class="s2">{</span><span class="s1">model_btc</span><span class="s3">.</span><span class="s1">coef_</span><span class="s3">[</span><span class="s5">0</span><span class="s3">]</span><span class="s2">}</span><span class="s4">'</span><span class="s3">)</span>
+
+<span class="s1">X_combined_eth </span><span class="s3">= </span><span class="s1">df_combined</span><span class="s3">[[</span><span class="s4">'Volume_eth'</span><span class="s3">]]</span>
+<span class="s1">y_combined_eth </span><span class="s3">= </span><span class="s1">df_combined</span><span class="s3">[</span><span class="s4">'Close_eth'</span><span class="s3">]</span>
+
+<span class="s1">model_eth </span><span class="s3">= </span><span class="s1">LinearRegression</span><span class="s3">()</span>
+<span class="s1">model_eth</span><span class="s3">.</span><span class="s1">fit</span><span class="s3">(</span><span class="s1">X_combined_eth</span><span class="s3">, </span><span class="s1">y_combined_eth</span><span class="s3">)</span>
+
+<span class="s1">print</span><span class="s3">(</span><span class="s4">f'ETH Regression coefficient: </span><span class="s2">{</span><span class="s1">model_eth</span><span class="s3">.</span><span class="s1">coef_</span><span class="s3">[</span><span class="s5">0</span><span class="s3">]</span><span class="s2">}</span><span class="s4">'</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">### Random Forest Regressor <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s2">from </span><span class="s1">sklearn</span><span class="s3">.</span><span class="s1">ensemble </span><span class="s2">import </span><span class="s1">RandomForestRegressor</span>
+
+<span class="s0"># BTC</span>
+<span class="s1">model_forest_btc </span><span class="s3">= </span><span class="s1">RandomForestRegressor</span><span class="s3">(</span><span class="s1">n_estimators</span><span class="s3">=</span><span class="s5">10</span><span class="s3">, </span><span class="s1">random_state</span><span class="s3">=</span><span class="s5">42</span><span class="s3">, </span><span class="s1">n_jobs</span><span class="s3">=-</span><span class="s5">1</span><span class="s3">)</span>
+<span class="s1">model_forest_btc</span><span class="s3">.</span><span class="s1">fit</span><span class="s3">(</span><span class="s1">X_btc_train</span><span class="s3">, </span><span class="s1">y_btc_train</span><span class="s3">)</span>
+
+<span class="s0"># ETH</span>
+<span class="s1">model_forest_eth </span><span class="s3">= </span><span class="s1">RandomForestRegressor</span><span class="s3">(</span><span class="s1">n_estimators</span><span class="s3">=</span><span class="s5">10</span><span class="s3">, </span><span class="s1">random_state</span><span class="s3">=</span><span class="s5">42</span><span class="s3">, </span><span class="s1">n_jobs</span><span class="s3">=-</span><span class="s5">1</span><span class="s3">)</span>
+<span class="s1">model_forest_eth</span><span class="s3">.</span><span class="s1">fit</span><span class="s3">(</span><span class="s1">X_eth_train</span><span class="s3">, </span><span class="s1">y_eth_train</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">#### Learning accuracy metrics <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s2">from </span><span class="s1">sklearn</span><span class="s3">.</span><span class="s1">metrics </span><span class="s2">import </span><span class="s1">mean_absolute_error</span><span class="s3">, </span><span class="s1">root_mean_squared_error</span>
+
+<span class="s0"># BTC</span>
+<span class="s1">y_btc_pred </span><span class="s3">= </span><span class="s1">model_forest_btc</span><span class="s3">.</span><span class="s1">predict</span><span class="s3">(</span><span class="s1">X_btc_test</span><span class="s3">)</span>
+
+<span class="s1">mae_btc </span><span class="s3">= </span><span class="s1">mean_absolute_error</span><span class="s3">(</span><span class="s1">y_btc_test</span><span class="s3">, </span><span class="s1">y_btc_pred</span><span class="s3">)</span>
+<span class="s1">rmse_btc </span><span class="s3">= </span><span class="s1">root_mean_squared_error</span><span class="s3">(</span><span class="s1">y_btc_test</span><span class="s3">, </span><span class="s1">y_btc_pred</span><span class="s3">)</span>
+
+<span class="s1">print</span><span class="s3">(</span><span class="s4">f'[BTC] MAE: </span><span class="s2">{</span><span class="s1">mae_btc</span><span class="s2">}</span><span class="s4">, RMSE: </span><span class="s2">{</span><span class="s1">rmse_btc</span><span class="s2">}</span><span class="s4">'</span><span class="s3">)</span>
+
+<span class="s0"># ETH</span>
+<span class="s1">y_eth_pred </span><span class="s3">= </span><span class="s1">model_forest_eth</span><span class="s3">.</span><span class="s1">predict</span><span class="s3">(</span><span class="s1">X_eth_test</span><span class="s3">)</span>
+
+<span class="s1">mae_eth </span><span class="s3">= </span><span class="s1">mean_absolute_error</span><span class="s3">(</span><span class="s1">y_eth_test</span><span class="s3">, </span><span class="s1">y_eth_pred</span><span class="s3">)</span>
+<span class="s1">rmse_eth </span><span class="s3">= </span><span class="s1">root_mean_squared_error</span><span class="s3">(</span><span class="s1">y_eth_test</span><span class="s3">, </span><span class="s1">y_eth_pred</span><span class="s3">)</span>
+
+<span class="s1">print</span><span class="s3">(</span><span class="s4">f'[ETH] MAE: </span><span class="s2">{</span><span class="s1">mae_eth</span><span class="s2">}</span><span class="s4">, RMSE: </span><span class="s2">{</span><span class="s1">rmse_eth</span><span class="s2">}</span><span class="s4">'</span><span class="s3">)</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">#### Actual vs predicted price <hr class="ls0"></span><span class="s0">#%% 
+# BTC</span>
+<span class="s1">btc_results </span><span class="s3">= </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">DataFrame</span><span class="s3">({</span>
+    <span class="s4">'Timestamp'</span><span class="s3">: </span><span class="s1">df_btc</span><span class="s3">.</span><span class="s1">loc</span><span class="s3">[</span><span class="s1">X_btc_test</span><span class="s3">.</span><span class="s1">index</span><span class="s3">, </span><span class="s4">'Timestamp'</span><span class="s3">],</span>
+    <span class="s4">'Actual'</span><span class="s3">: </span><span class="s1">y_btc_test</span><span class="s3">,</span>
+    <span class="s4">'Predicted'</span><span class="s3">: </span><span class="s1">y_btc_pred</span>
+<span class="s3">})</span>
+<span class="s1">btc_results </span><span class="s3">= </span><span class="s1">btc_results</span><span class="s3">[</span><span class="s1">btc_results</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">].</span><span class="s1">dt</span><span class="s3">.</span><span class="s1">year </span><span class="s3">== </span><span class="s5">2024</span><span class="s3">]</span>
+
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">25</span><span class="s3">, </span><span class="s5">12</span><span class="s3">))</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">scatter</span><span class="s3">(</span><span class="s1">btc_results</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">btc_results</span><span class="s3">[</span><span class="s4">'Actual'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'Actual price'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'purple'</span><span class="s3">, </span><span class="s1">alpha</span><span class="s3">=</span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">s</span><span class="s3">=</span><span class="s5">1</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">scatter</span><span class="s3">(</span><span class="s1">btc_results</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">btc_results</span><span class="s3">[</span><span class="s4">'Predicted'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'Predicted price'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'orange'</span><span class="s3">, </span><span class="s1">alpha</span><span class="s3">=</span><span class="s5">0.25</span><span class="s3">, </span><span class="s1">s</span><span class="s3">=</span><span class="s5">1</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'BTC'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xlabel</span><span class="s3">(</span><span class="s4">'Timestamp'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">ylabel</span><span class="s3">(</span><span class="s4">'Close price'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xticks</span><span class="s3">(</span><span class="s1">rotation</span><span class="s3">=</span><span class="s5">45</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">legend</span><span class="s3">()</span>
+
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span>
+
+<span class="s0"># ETH</span>
+<span class="s1">eth_results </span><span class="s3">= </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">DataFrame</span><span class="s3">({</span>
+    <span class="s4">'Timestamp'</span><span class="s3">: </span><span class="s1">df_eth</span><span class="s3">.</span><span class="s1">loc</span><span class="s3">[</span><span class="s1">X_eth_test</span><span class="s3">.</span><span class="s1">index</span><span class="s3">, </span><span class="s4">'Timestamp'</span><span class="s3">],</span>
+    <span class="s4">'Actual'</span><span class="s3">: </span><span class="s1">y_eth_test</span><span class="s3">,</span>
+    <span class="s4">'Predicted'</span><span class="s3">: </span><span class="s1">y_eth_pred</span>
+<span class="s3">})</span>
+<span class="s1">eth_results </span><span class="s3">= </span><span class="s1">eth_results</span><span class="s3">[</span><span class="s1">eth_results</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">].</span><span class="s1">dt</span><span class="s3">.</span><span class="s1">year </span><span class="s3">== </span><span class="s5">2024</span><span class="s3">]</span>
+
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">figure</span><span class="s3">(</span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">25</span><span class="s3">, </span><span class="s5">12</span><span class="s3">))</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">scatter</span><span class="s3">(</span><span class="s1">eth_results</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">eth_results</span><span class="s3">[</span><span class="s4">'Actual'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'Actual price'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'purple'</span><span class="s3">, </span><span class="s1">alpha</span><span class="s3">=</span><span class="s5">0.5</span><span class="s3">, </span><span class="s1">s</span><span class="s3">=</span><span class="s5">1</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">scatter</span><span class="s3">(</span><span class="s1">eth_results</span><span class="s3">[</span><span class="s4">'Timestamp'</span><span class="s3">], </span><span class="s1">eth_results</span><span class="s3">[</span><span class="s4">'Predicted'</span><span class="s3">], </span><span class="s1">label</span><span class="s3">=</span><span class="s4">'Predicted price'</span><span class="s3">, </span><span class="s1">color</span><span class="s3">=</span><span class="s4">'orange'</span><span class="s3">, </span><span class="s1">alpha</span><span class="s3">=</span><span class="s5">0.25</span><span class="s3">, </span><span class="s1">s</span><span class="s3">=</span><span class="s5">1</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">title</span><span class="s3">(</span><span class="s4">'ETH'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xlabel</span><span class="s3">(</span><span class="s4">'Timestamp'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">ylabel</span><span class="s3">(</span><span class="s4">'Close price'</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">xticks</span><span class="s3">(</span><span class="s1">rotation</span><span class="s3">=</span><span class="s5">45</span><span class="s3">)</span>
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">legend</span><span class="s3">()</span>
+
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span><hr class="ls0"><span class="s0">#%% md 
+</span><span class="s1">#### Feature importance <hr class="ls0"></span><span class="s0">#%% 
+</span><span class="s1">importance_btc </span><span class="s3">= </span><span class="s1">model_forest_btc</span><span class="s3">.</span><span class="s1">feature_importances_</span>
+<span class="s1">importance_eth </span><span class="s3">= </span><span class="s1">model_forest_eth</span><span class="s3">.</span><span class="s1">feature_importances_</span>
+
+<span class="s1">feature_names_btc </span><span class="s3">= </span><span class="s1">X_btc</span><span class="s3">.</span><span class="s1">columns</span>
+<span class="s1">feature_names_eth </span><span class="s3">= </span><span class="s1">X_eth</span><span class="s3">.</span><span class="s1">columns</span>
+
+<span class="s1">importance_df_btc </span><span class="s3">= </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">DataFrame</span><span class="s3">({</span><span class="s4">'Feature'</span><span class="s3">: </span><span class="s1">feature_names_btc</span><span class="s3">, </span><span class="s4">'Importance'</span><span class="s3">: </span><span class="s1">importance_btc</span><span class="s3">})</span>
+<span class="s1">importance_df_eth </span><span class="s3">= </span><span class="s1">pd</span><span class="s3">.</span><span class="s1">DataFrame</span><span class="s3">({</span><span class="s4">'Feature'</span><span class="s3">: </span><span class="s1">feature_names_eth</span><span class="s3">, </span><span class="s4">'Importance'</span><span class="s3">: </span><span class="s1">importance_eth</span><span class="s3">})</span>
+
+<span class="s1">importance_df_btc </span><span class="s3">= </span><span class="s1">importance_df_btc</span><span class="s3">.</span><span class="s1">sort_values</span><span class="s3">(</span><span class="s1">by</span><span class="s3">=</span><span class="s4">'Importance'</span><span class="s3">, </span><span class="s1">ascending</span><span class="s3">=</span><span class="s2">False</span><span class="s3">)</span>
+<span class="s1">importance_df_eth </span><span class="s3">= </span><span class="s1">importance_df_eth</span><span class="s3">.</span><span class="s1">sort_values</span><span class="s3">(</span><span class="s1">by</span><span class="s3">=</span><span class="s4">'Importance'</span><span class="s3">, </span><span class="s1">ascending</span><span class="s3">=</span><span class="s2">False</span><span class="s3">)</span>
+
+<span class="s1">fig</span><span class="s3">, </span><span class="s1">ax </span><span class="s3">= </span><span class="s1">plt</span><span class="s3">.</span><span class="s1">subplots</span><span class="s3">(</span><span class="s5">1</span><span class="s3">, </span><span class="s5">2</span><span class="s3">, </span><span class="s1">figsize</span><span class="s3">=(</span><span class="s5">14</span><span class="s3">, </span><span class="s5">7</span><span class="s3">))</span>
+
+<span class="s1">importance_df_btc</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">kind</span><span class="s3">=</span><span class="s4">'bar'</span><span class="s3">, </span><span class="s1">x</span><span class="s3">=</span><span class="s4">'Feature'</span><span class="s3">, </span><span class="s1">y</span><span class="s3">=</span><span class="s4">'Importance'</span><span class="s3">, </span><span class="s1">ax</span><span class="s3">=</span><span class="s1">ax</span><span class="s3">[</span><span class="s5">0</span><span class="s3">], </span><span class="s1">legend</span><span class="s3">=</span><span class="s2">False</span><span class="s3">)</span>
+<span class="s1">ax</span><span class="s3">[</span><span class="s5">0</span><span class="s3">].</span><span class="s1">set_title</span><span class="s3">(</span><span class="s4">'BTC feature importance'</span><span class="s3">)</span>
+<span class="s1">ax</span><span class="s3">[</span><span class="s5">0</span><span class="s3">].</span><span class="s1">set_ylabel</span><span class="s3">(</span><span class="s4">'Importance'</span><span class="s3">)</span>
+
+<span class="s1">importance_df_eth</span><span class="s3">.</span><span class="s1">plot</span><span class="s3">(</span><span class="s1">kind</span><span class="s3">=</span><span class="s4">'bar'</span><span class="s3">, </span><span class="s1">x</span><span class="s3">=</span><span class="s4">'Feature'</span><span class="s3">, </span><span class="s1">y</span><span class="s3">=</span><span class="s4">'Importance'</span><span class="s3">, </span><span class="s1">ax</span><span class="s3">=</span><span class="s1">ax</span><span class="s3">[</span><span class="s5">1</span><span class="s3">], </span><span class="s1">legend</span><span class="s3">=</span><span class="s2">False</span><span class="s3">)</span>
+<span class="s1">ax</span><span class="s3">[</span><span class="s5">1</span><span class="s3">].</span><span class="s1">set_title</span><span class="s3">(</span><span class="s4">'ETH feature importance'</span><span class="s3">)</span>
+<span class="s1">ax</span><span class="s3">[</span><span class="s5">1</span><span class="s3">].</span><span class="s1">set_ylabel</span><span class="s3">(</span><span class="s4">'Importance'</span><span class="s3">)</span>
+
+<span class="s1">plt</span><span class="s3">.</span><span class="s1">show</span><span class="s3">()</span></pre>
+</body>
+</html>
