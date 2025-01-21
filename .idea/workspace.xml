@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="292578b8-b822-45da-bbf4-89bb3241cdf8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/BitcoinTrends.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/eth_usd_combined.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sample.ipynb" afterDir="false" />
-    </list>
+    <list default="true" id="292578b8-b822-45da-bbf4-89bb3241cdf8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -71,7 +62,7 @@
       <workItem from="1737464913282" duration="1669000" />
       <workItem from="1737466600596" duration="735000" />
       <workItem from="1737467358848" duration="9874000" />
-      <workItem from="1737478950783" duration="2301000" />
+      <workItem from="1737478950783" duration="5285000" />
     </task>
     <servers />
   </component>
