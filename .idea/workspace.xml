@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="292578b8-b822-45da-bbf4-89bb3241cdf8" name="Changes" comment="" />
+    <list default="true" id="292578b8-b822-45da-bbf4-89bb3241cdf8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crypto_trends.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/crypto_trends.ipynb" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -76,7 +79,7 @@
       <workItem from="1737555714653" duration="2134000" />
       <workItem from="1737557857073" duration="10092000" />
       <workItem from="1737567955078" duration="3427000" />
-      <workItem from="1737573309686" duration="9052000" />
+      <workItem from="1737573309686" duration="10945000" />
     </task>
     <servers />
   </component>
