@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="292578b8-b822-45da-bbf4-89bb3241cdf8" name="Changes" comment="" />
+    <list default="true" id="292578b8-b822-45da-bbf4-89bb3241cdf8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crypto_trends.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/crypto_trends.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -68,6 +73,15 @@
       <workItem from="1737466600596" duration="735000" />
       <workItem from="1737467358848" duration="9874000" />
       <workItem from="1737478950783" duration="5285000" />
+      <workItem from="1737491994161" duration="2841000" />
+      <workItem from="1737494841444" duration="813000" />
+      <workItem from="1737495660406" duration="405000" />
+      <workItem from="1737551120237" duration="1370000" />
+      <workItem from="1737553048080" duration="2588000" />
+      <workItem from="1737555714653" duration="2134000" />
+      <workItem from="1737557857073" duration="10092000" />
+      <workItem from="1737567955078" duration="3427000" />
+      <workItem from="1737573309686" duration="8739000" />
     </task>
     <servers />
   </component>
